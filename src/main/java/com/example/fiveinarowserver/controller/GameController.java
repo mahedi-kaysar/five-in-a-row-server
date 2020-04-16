@@ -15,45 +15,46 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Log4j2
 @RestController
 @RequestMapping(path = "game")
-@Log4j2
 public class GameController {
+    /**
+     * An instance of PlayerService
+     */
     @Autowired
     PlayerService playerService;
+
+    /**
+     * An instance of GameService
+     */
     @Autowired
     GameService gameService;
 
-    @PostMapping(path = "/register/player", produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * This endpoint receives PlayerDto as request body and register that player in the game.
+     *
+     * @param playerDto
+     * @return
+     */
+    @PostMapping(path = "/register/player", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ConnectionInfo registerPlayer(@RequestBody PlayerDto playerDto) {
-        Player player = playerService.addNewPlayer(playerDto);
-
-        ArrayList<Player> players = playerService.getAllPlayers();
-        if (players.size() == playerService.getMaxAllowedPlayers()) {
-            Game game = gameService.start();
-            gameService.updatePlayerToNextTurn(game.getId(), players.get(0));
-            log.info("The game has been started ...");
-        }
-
-        Optional<Game> game = gameService.getGameOne();
-        if (game.isPresent()) {
-            return  ConnectionInfo.builder().player(player).game(game.get()).build();
-        } else {
-            return ConnectionInfo.builder().player(player).build();
-        }
+        return  gameService.registerPlayer(playerDto);
     }
 
-    @GetMapping(path = "/board/")
+    @DeleteMapping(path = "/player/{playerId}/disconnect")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void disconnectPlayer(@PathVariable int playerId) {
+        this.gameService.disconnectPlayer(playerId);
+    }
+
+    @GetMapping(path = "/board/state")
     public Game getBoardStatusAndTurn() {
-        Optional<Game> optional = gameService.getGameOne();
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            return null;
-        }
+        return gameService.getCurrentGameState();
     }
-    @PutMapping(path = "/player/{playerId}/next-move/{column}", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(path = "/player/{playerId}/next-move/{column}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Game executeNextMove(@PathVariable int playerId, @PathVariable int column) {
         return gameService.updateBoardAndAlterNextTurn(playerId, column);

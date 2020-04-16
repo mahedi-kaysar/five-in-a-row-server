@@ -92,7 +92,6 @@ public class GameRepository {
             game = optional.get();
             Board updatedBoard = game.getBoard();
             findPossibleRowAndUpdate(updatedBoard, player, columnToUpdate);
-            updateNextTurn(game);
         }
         return game;
     }
@@ -124,7 +123,7 @@ public class GameRepository {
         }
     }
 
-    private void updateNextTurn(Game game) {
-
+    public void removeGame(Game game) {
+        this.games.remove(game);
     }
 }

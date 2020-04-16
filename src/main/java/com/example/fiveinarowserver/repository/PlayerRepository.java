@@ -1,10 +1,12 @@
 package com.example.fiveinarowserver.repository;
 
+import com.example.fiveinarowserver.exception.GameException;
 import com.example.fiveinarowserver.model.board.Board;
 import com.example.fiveinarowserver.model.board.BoardDiscColor;
 import com.example.fiveinarowserver.repository.entity.Player;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -66,5 +68,14 @@ public class PlayerRepository {
             player = Optional.of(optional.get());
         }
         return player;
+    }
+
+    public void removePlayer(final int playerId) {
+        Optional<Player> optional = findPlayer(playerId);
+        if (optional.isPresent()) {
+            this.players.remove(optional.get());
+        } else {
+            throw new GameException("Player Id not found to remove", HttpStatus.NOT_FOUND);
+        }
     }
 }

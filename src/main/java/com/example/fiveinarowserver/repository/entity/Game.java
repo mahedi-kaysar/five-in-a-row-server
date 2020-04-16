@@ -7,11 +7,24 @@ import lombok.*;
 @Data
 @Builder
 public class Game {
+
+    /**
+     *
+     */
     private final int id;
 
+    /**
+     *
+     */
     private final Board board;
 
+    /**
+     *
+     */
     private GameStatus gameStatus;
 
+    /**
+     *
+     */
     private Player playerToNextTurn;
 }

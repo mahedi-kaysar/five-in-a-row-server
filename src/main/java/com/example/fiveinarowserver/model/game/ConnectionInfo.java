@@ -5,8 +5,6 @@ import com.example.fiveinarowserver.repository.entity.Player;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
-
 @Data
 @Builder
 public class ConnectionInfo {
