@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class PlayerService {
@@ -24,5 +25,9 @@ public class PlayerService {
 
     public int getMaxAllowedPlayers() {
         return playerRepository.getMaxAllowedPlayers();
+    }
+
+    public Player findPlayer(int playerId) {
+        return this.playerRepository.findPlayer(playerId).get();
     }
 }

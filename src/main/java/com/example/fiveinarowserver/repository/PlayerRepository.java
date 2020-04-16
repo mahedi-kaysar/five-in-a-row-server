@@ -1,5 +1,7 @@
 package com.example.fiveinarowserver.repository;
 
+import com.example.fiveinarowserver.model.board.Board;
+import com.example.fiveinarowserver.model.board.BoardDiscColor;
 import com.example.fiveinarowserver.repository.entity.Player;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,13 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 
 @Repository
 @Data
 public class PlayerRepository {
     private ArrayList<Player> players;
-    private final char[] availableColors = {'O', 'X'};
-    private HashSet<Character> usedColorSet;
+    private HashSet<BoardDiscColor> usedColorSet;
     @Value("${game.maxAllowedPlayers:2}")
     private int maxAllowedPlayers;
     private static PlayerRepository playerRepository;
@@ -46,12 +48,23 @@ public class PlayerRepository {
     }
 
     private void assignAvailableColor(Player player) {
-        if (usedColorSet.contains(availableColors[0])) {
-            player.setColor(availableColors[1]);
-            usedColorSet.add(availableColors[1]);
+        if (usedColorSet.contains(BoardDiscColor.PLAYER_O)) {
+            player.setColor(BoardDiscColor.PLAYER_X);
+            usedColorSet.add(BoardDiscColor.PLAYER_X);
         } else {
-            player.setColor(availableColors[0]);
-            usedColorSet.add(availableColors[0]);
+            player.setColor(BoardDiscColor.PLAYER_O);
+            usedColorSet.add(BoardDiscColor.PLAYER_O);
         }
+    }
+
+    public Optional<Player> findPlayer(final int playerId) {
+        Optional<Player> optional = this.players.stream()
+                .filter(player -> player.getId() == playerId)
+                .findFirst();
+        Optional<Player> player = Optional.empty();
+        if(optional.isPresent()){
+            player = Optional.of(optional.get());
+        }
+        return player;
     }
 }

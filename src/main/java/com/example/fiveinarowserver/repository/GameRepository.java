@@ -1,5 +1,6 @@
 package com.example.fiveinarowserver.repository;
 
+import com.example.fiveinarowserver.model.board.BoardDiscColor;
 import com.example.fiveinarowserver.model.game.GameStatus;
 import com.example.fiveinarowserver.model.board.Board;
 import com.example.fiveinarowserver.repository.entity.Game;
@@ -82,17 +83,18 @@ public class GameRepository {
         return board;
     }
 
-    public Optional<Board> updateBoard(int gameId, int columnToUpdate, Character color) {
+    public Game updateBoard(int gameId, Player player, int columnToUpdate) {
         Optional<Game> optional = games.stream()
                 .filter(game -> game.getId() == gameId)
                 .findFirst();
-        Optional<Board> board = Optional.empty();
+        Game game = null;
         if(optional.isPresent()){
-            Board updatedBoard = optional.get().getBoard();
-            //updatedBoard.getTable()[columnToUpdate][];
-            board = Optional.of(optional.get().getBoard());
+            game = optional.get();
+            Board updatedBoard = game.getBoard();
+            findPossibleRowAndUpdate(updatedBoard, player, columnToUpdate);
+            updateNextTurn(game);
         }
-        return board;
+        return game;
     }
 
     public Optional<Game> updatePlayerToNextTurn(int gameId, Player player) {
@@ -106,5 +108,23 @@ public class GameRepository {
             game = Optional.of(updatedGame);
         }
         return game;
+    }
+
+    private void findPossibleRowAndUpdate(Board board, Player player, int columnToUpdate) {
+        BoardDiscColor[][] table = board.getTable();
+        int row;
+        for (row = board.getTotalRow(); row > 0; row--) {
+            if (table[row][columnToUpdate] == BoardDiscColor.NONE ) {
+                table[row][columnToUpdate] = player.getColor();
+                break;
+            }
+        }
+        if(row == 0) {
+            throw new RuntimeException("Invalid Column");
+        }
+    }
+
+    private void updateNextTurn(Game game) {
+
     }
 }
