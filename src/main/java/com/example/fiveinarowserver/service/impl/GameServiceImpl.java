@@ -98,6 +98,7 @@ public class GameServiceImpl implements GameService {
                 }
                 else {
                     game.setGameStatus(GameStatus.FINISHED);
+                    game.setChampion(game.getPlayerToNextTurn());
                     game.setPlayerToNextTurn(null);
                 }
                 return game;

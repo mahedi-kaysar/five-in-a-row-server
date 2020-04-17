@@ -1,5 +1,6 @@
 package com.example.fiveinarowserver.repository;
 
+import com.example.fiveinarowserver.exception.GameException;
 import com.example.fiveinarowserver.model.board.BoardDiscColor;
 import com.example.fiveinarowserver.model.game.GameStatus;
 import com.example.fiveinarowserver.model.board.Board;
@@ -7,6 +8,7 @@ import com.example.fiveinarowserver.repository.entity.Game;
 import com.example.fiveinarowserver.repository.entity.Player;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public class GameRepository {
      */
     public Game initializeGame(Player player) {
         if (this.maxSupportedGame  <= this.games.size())
-            throw new RuntimeException(
+            throw new GameException(
                 String.format("Allowed (%s) Number of Games have already been started=",
                 this.maxSupportedGame)
             );
@@ -115,7 +117,11 @@ public class GameRepository {
         if(optional.isPresent()){
             game = optional.get();
             Board updatedBoard = game.getBoard();
-            findPossibleRowAndUpdate(updatedBoard, player, columnToUpdate);
+            if (columnToUpdate >= 1 && columnToUpdate <= game.getBoard().getTotalColumn()) {
+                findPossibleRowAndUpdate(updatedBoard, player, columnToUpdate);
+            } else{
+                throw new GameException("Column number is not valid", HttpStatus.BAD_REQUEST);
+            }
         }
         return game;
     }
@@ -163,7 +169,7 @@ public class GameRepository {
             }
         }
         if(row == 0) {
-            throw new RuntimeException("Invalid Column");
+            throw new GameException("No empty place in this Column");
         }
     }
 
@@ -185,7 +191,6 @@ public class GameRepository {
                     } else if (hasHorizontalWinState(board, i, j, colorToFind)) {
                         return true;
                     } else if (hasFirstDiagonalWinState(board, i, j, colorToFind)) {
-                        log.info(i + "," + j);
                         return true;
                     } else if (hasSecondDiagonalWinState(board, i, j, colorToFind)) {
                         return true;

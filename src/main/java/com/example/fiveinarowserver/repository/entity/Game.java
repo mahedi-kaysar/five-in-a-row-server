@@ -27,4 +27,9 @@ public class Game {
      *
      */
     private Player playerToNextTurn;
+
+    /**
+     *
+     */
+    private Player champion;
 }
