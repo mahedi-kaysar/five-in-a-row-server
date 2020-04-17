@@ -11,13 +11,23 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ *
+ */
 @Repository
 public class GameRepository {
+
+    /**
+     *
+     */
     private final ArrayList<Game> games;
 
+    /**
+     *
+     */
     @Value("${game.maxSupportedGame:1}")
     private int maxSupportedGame;
-    private static GameRepository gameRepository;
+
     /**
      *
      */
@@ -37,7 +47,7 @@ public class GameRepository {
      *
      * @return
      */
-    public Game initializeGame() {
+    public Game initializeGame(Player player) {
         if (this.maxSupportedGame  <= this.games.size())
             throw new RuntimeException(
                 String.format("Allowed (%s) Number of Games have already been started=",
@@ -49,7 +59,7 @@ public class GameRepository {
                 .gameStatus(GameStatus.INITIALISED)
                 .build();
         this.games.add(game);
-
+        updatePlayerToNextTurn(game.getId(), player);
         return game;
     }
 
@@ -72,6 +82,11 @@ public class GameRepository {
         return game;
     }
 
+    /**
+     *
+     * @param gameId
+     * @return
+     */
     public Optional<Board> getBoard(final int gameId) {
         Optional<Game> optional = games.stream()
                 .filter(game -> game.getId() == gameId)
@@ -83,6 +98,13 @@ public class GameRepository {
         return board;
     }
 
+    /**
+     *
+     * @param gameId
+     * @param player
+     * @param columnToUpdate
+     * @return
+     */
     public Game updateBoard(int gameId, Player player, int columnToUpdate) {
         Optional<Game> optional = games.stream()
                 .filter(game -> game.getId() == gameId)
@@ -96,6 +118,12 @@ public class GameRepository {
         return game;
     }
 
+    /**
+     *
+     * @param gameId
+     * @param player
+     * @return
+     */
     public Optional<Game> updatePlayerToNextTurn(int gameId, Player player) {
         Optional<Game> optional = games.stream()
                 .filter(game -> game.getId() == gameId)
@@ -109,6 +137,20 @@ public class GameRepository {
         return game;
     }
 
+    /**
+     *
+     * @param game
+     */
+    public void removeGame(Game game) {
+        this.games.remove(game);
+    }
+
+    /**
+     *
+     * @param board
+     * @param player
+     * @param columnToUpdate
+     */
     private void findPossibleRowAndUpdate(Board board, Player player, int columnToUpdate) {
         BoardDiscColor[][] table = board.getTable();
         int row;
@@ -121,9 +163,5 @@ public class GameRepository {
         if(row == 0) {
             throw new RuntimeException("Invalid Column");
         }
-    }
-
-    public void removeGame(Game game) {
-        this.games.remove(game);
     }
 }

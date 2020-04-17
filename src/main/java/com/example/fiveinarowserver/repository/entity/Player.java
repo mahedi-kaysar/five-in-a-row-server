@@ -1,7 +1,6 @@
 package com.example.fiveinarowserver.repository.entity;
 
 import com.example.fiveinarowserver.model.board.BoardDiscColor;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 

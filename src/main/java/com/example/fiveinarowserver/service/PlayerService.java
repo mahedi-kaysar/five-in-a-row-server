@@ -34,5 +34,14 @@ public interface PlayerService {
      */
     public Player findPlayer(int playerId);
 
+    /**
+     *
+     * @param playerId
+     */
     void removePlayer(int playerId);
+
+    /**
+     *
+     */
+    void removeAllPlayers();
 }

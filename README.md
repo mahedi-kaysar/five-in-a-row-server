@@ -1,28 +1,44 @@
-## Server
-1) upon start, waits for the two players to connect. 
-2) If one of the players disconnects, the game is over.
+#Five-in-a-row game server
+## Rules and assumptions
+1) upon start, server waits for the two players to connect. 
+2) More than two players can't connect in that server, however, limit is configurable.
+3) If one of the players disconnects, the game is over and all players will be removed.
+4) More that 1 game can't be started, however, limit is configurable.
+5) Server will decide the color of a corresponding player (PLAYER_O or PLAYER_X). Default color of the board is (NONE).
 
-Rest Endpoints:
-http://localhost:8080/player/connect
-http://localhost:8080/player/<id>/disconnect
-http://localhost:8080/game/start
-http://localhost:8080/game/status
-http://localhost:8080/board/status
-http://localhost:8080/board/nextMove
+## Rest Endpoints summary:
+Register Player:
+```$xslt
+curl -H "Content-Type: application/json" -X POST http://localhost:8080/game/register/player -d '{"name":"Mahedi"}'
+curl -H "Content-Type: application/json" -X POST http://localhost:8080/game/register/player -d '{"name":"John"}'
+```
+Get Game state and player to next turn:
+```$xslt
+curl -X GET http://localhost:8080/game/board/state
+```
+Play next move:
+```$xslt
+curl -X GET http://localhost:8080/game/player/<playerId>/next-move/<columnToMove>
+curl -X GET http://localhost:8080/game/player/1/next-move/8
+```
+Disconnect Player:
+```$xslt
+curl -X DELETE http://localhost:8080/game/player/<playerId>/disconnect
+curl -X DELETE http://localhost:8080/game/player/1/disconnect
+```
+## Required software
+* java 8+
+* mvn 3.6+
+## how to test and run
+```$xslt
+mvn clean test
+mvn spring-boot:run
+```
+## Test Coverage:
+```$xslt
+mvn test
+cat target/site/jacoco/index.html
+```
+## server: http://localhost:8080
 
-## Client
-1) upon start, the client prompts the player to enter her name and displays whether it’s waiting for a 2nd player, or the game can start.
-	each client will request to the bellow endpoint by providing his/her name.
-	http://localhost:8080/player/connect -> payload{player:{name: mahedi, id=1, color='O'}, isGameInitilized=false}
-	http://localhost:8080/player/connect -> payload{player:{name: Irin, id=2, color='X'}, isGameInitilized=true, Game: {id: 1}}
-	(board will be initialized)
-2) display current status of board and promot for next move if it's his turn
-	http://localhost:8080/board/<id>/status --> payload{board: {hight, width, table}, isMyTurn: true}
-	http://localhost:8080/board/<id>/status --> payload{board: {hight, width, table}, isMyTurn: false, isGameOver=false}
-	if isGameOver=true then display gamestatus:
-	http://localhost:8080/game/status -> payload{isGameCanceled: false, Winer: {name:Mahedi}}
-
-3) take input from client of next move (1-9) and sumit
-    http://localhost:8080/board/<id>/nextMove
-	
-4) http://localhost:8080/player/<id>/disconnect
+## JAVA client: https://github.com/mahedi-kaysar/five-in-a-row-client
