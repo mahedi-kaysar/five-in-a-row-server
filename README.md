@@ -1,10 +1,11 @@
-#Five-in-a-row game server
+# Five-in-a-row game server
 ## Rules and assumptions
 1) upon start, server waits for the two players to connect. 
 2) More than two players can't connect in that server, however, limit is configurable.
 3) If one of the players disconnects, the game is over and all players will be removed.
 4) More that 1 game can't be started, however, limit is configurable.
-5) Server will decide the color of a corresponding player (PLAYER_O or PLAYER_X). Default color of the board is (NONE).
+5) Server will decide the color of a corresponding player (O or X). Default color of the board is (N).
+6) For each turn, server will check if a player is won or game is tied.
 
 ## Rest Endpoints summary:
 Register Player:

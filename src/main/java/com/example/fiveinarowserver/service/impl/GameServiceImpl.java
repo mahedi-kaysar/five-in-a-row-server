@@ -2,6 +2,7 @@ package com.example.fiveinarowserver.service.impl;
 
 import com.example.fiveinarowserver.exception.GameException;
 import com.example.fiveinarowserver.model.game.ConnectionInfo;
+import com.example.fiveinarowserver.model.game.GameStatus;
 import com.example.fiveinarowserver.model.player.PlayerDto;
 import com.example.fiveinarowserver.repository.GameRepository;
 import com.example.fiveinarowserver.repository.entity.Game;
@@ -87,10 +88,17 @@ public class GameServiceImpl implements GameService {
             if (isValidPlayerToTurn(game, playerId)) {
                 Player player = playerService.findPlayer(playerId);
                 game = this.gameRepository.updateBoard(game.getId(), player, column);
-                try {
-                    updateNextTurn(game);
-                } catch (Exception e) {
-                    log.error("And error occurred during next turn assignment", e);
+                if(!this.gameRepository.didWin(game)) {
+                    if (!this.gameRepository.isMatchTied(game)) {
+                        updateNextTurn(game);
+                    } else {
+                        game.setGameStatus(GameStatus.TIED);
+                        game.setPlayerToNextTurn(null);
+                    }
+                }
+                else {
+                    game.setGameStatus(GameStatus.FINISHED);
+                    game.setPlayerToNextTurn(null);
                 }
                 return game;
             } else {
