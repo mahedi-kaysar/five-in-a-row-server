@@ -1,10 +1,12 @@
 package com.example.fiveinarowserver.exception;
 
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 /**
  *
  */
+@Data
 public class GameException extends RuntimeException {
 
     /**
