@@ -4,7 +4,7 @@
 2) More than two players can't connect in that server, however, limit is configurable.
 3) If one of the players disconnects, the game is over and all players will be removed.
 4) More that 1 game can't be started, however, limit is configurable.
-5) Server will decide the color of a corresponding player (O or X). Default color of the board is (N).
+5) Server will decide the color of a corresponding player (PLAYER_O or PLAYER_X). Default color of the board is (NONE).
 6) For each turn, server will check if a player is won or game is tied.
 
 ## Rest Endpoints summary:
@@ -43,3 +43,11 @@ cat target/site/jacoco/index.html
 ## server: http://localhost:8080
 
 ## JAVA client: https://github.com/mahedi-kaysar/five-in-a-row-client
+Please use this client for playing the game.
+
+## Future Work
+* Add more Unit test
+* Add Integration test
+* Improve java docs
+* Improve design
+* Add more feature.
