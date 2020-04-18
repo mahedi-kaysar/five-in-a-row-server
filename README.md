@@ -16,6 +16,12 @@ curl -H "Content-Type: application/json" -X POST http://localhost:8080/game/regi
 Get Game state and player to next turn:
 ```$xslt
 curl -X GET http://localhost:8080/game/board/state
+
+In response: There are three possible status can be found.
+
+INITIALIZED: means the game has been started
+FINISHED: means the game is finished succesfully and someone has won.
+TIED: means the game is finished with tie.  
 ```
 Play next move:
 ```$xslt
